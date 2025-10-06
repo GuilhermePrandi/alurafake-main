@@ -13,6 +13,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      mysql:
+        image: mysql:8
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: alurafake_test
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -30,6 +44,19 @@ jobs:
           key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
           restore-keys: |
             ${{ runner.os }}-maven-
+
+      - name: Wait for MySQL to be ready
+        run: |
+          until mysqladmin ping -h 127.0.0.1 -uroot -proot; do
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
+
+      - name: Run Flyway migrations
+        run: mvn flyway:migrate \
+          -Dflyway.url=jdbc:mysql://127.0.0.1:3306/alurafake_test?useSSL=false&serverTimezone=UTC \
+          -Dflyway.user=root \
+          -Dflyway.password=root
 
       - name: Build and run tests
         run: mvn clean verify -B
