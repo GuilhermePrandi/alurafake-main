@@ -1,5 +1,10 @@
-package br.com.alura.AluraFake.course;
+package br.com.alura.AluraFake.course.controller;
 
+import br.com.alura.AluraFake.course.model.Course;
+import br.com.alura.AluraFake.course.dto.CourseListItemDTO;
+import br.com.alura.AluraFake.course.repository.CourseRepository;
+import br.com.alura.AluraFake.course.dto.NewCourseDTO;
+import br.com.alura.AluraFake.course.service.CourseService;
 import br.com.alura.AluraFake.user.*;
 import br.com.alura.AluraFake.util.ErrorItemDTO;
 import jakarta.validation.Valid;
@@ -11,19 +16,22 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
+@RequestMapping("/course")
 public class CourseController {
 
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
+    private final CourseService courseService;
 
     @Autowired
-    public CourseController(CourseRepository courseRepository, UserRepository userRepository){
+    public CourseController(CourseRepository courseRepository, UserRepository userRepository, CourseService courseService) {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
+        this.courseService = courseService;
     }
 
     @Transactional
-    @PostMapping("/course/new")
+    @PostMapping("/new")
     public ResponseEntity createCourse(@Valid @RequestBody NewCourseDTO newCourse) {
 
         //Caso implemente o bonus, pegue o instrutor logado
@@ -31,7 +39,7 @@ public class CourseController {
                 .findByEmail(newCourse.getEmailInstructor())
                 .filter(User::isInstructor);
 
-        if(possibleAuthor.isEmpty()) {
+        if (possibleAuthor.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorItemDTO("emailInstructor", "Usuário não é um instrutor"));
         }
@@ -42,17 +50,22 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping("/course/all")
-    public ResponseEntity<List<CourseListItemDTO>> createCourse() {
+    @GetMapping("/all")
+    public ResponseEntity<List<CourseListItemDTO>> listAllCourses() {
         List<CourseListItemDTO> courses = courseRepository.findAll().stream()
                 .map(CourseListItemDTO::new)
                 .toList();
         return ResponseEntity.ok(courses);
     }
 
-    @PostMapping("/course/{id}/publish")
-    public ResponseEntity createCourse(@PathVariable("id") Long id) {
-        return ResponseEntity.ok().build();
+    @PostMapping("/{id}/publish")
+    public ResponseEntity<?> publishCourse(@PathVariable("id") Long id) {
+        try {
+            courseService.publishCourse(id);
+            return ResponseEntity.ok().build();
+        } catch (IllegalStateException | IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new ErrorItemDTO("course", ex.getMessage()));
+        }
     }
-
 }
