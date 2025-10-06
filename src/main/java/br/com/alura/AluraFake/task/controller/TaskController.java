@@ -1,6 +1,8 @@
 package br.com.alura.AluraFake.task.controller;
 
+import br.com.alura.AluraFake.course.dto.CourseListItemDTO;
 import br.com.alura.AluraFake.task.dto.NewTaskDTO;
+import br.com.alura.AluraFake.task.dto.TaskListItemDTO;
 import br.com.alura.AluraFake.task.model.Task;
 import br.com.alura.AluraFake.task.model.TaskOption;
 import br.com.alura.AluraFake.task.model.TaskType;
@@ -11,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/task/new")
+@RequestMapping("/task")
 public class TaskController {
 
     private final TaskService taskService;
@@ -36,7 +38,7 @@ public class TaskController {
         return task;
     }
 
-    @PostMapping("/opentext")
+    @PostMapping("/new/opentext")
     public ResponseEntity<Task> newOpenText(@RequestBody NewTaskDTO dto) {
         Task task = buildTaskFromDto(dto, TaskType.OPEN_TEXT);
         Task saved = taskService.createTask(dto.getCourseId(), task);
@@ -44,7 +46,7 @@ public class TaskController {
         return ResponseEntity.ok(saved);
     }
 
-    @PostMapping("/singlechoice")
+    @PostMapping("/new/singlechoice")
     public ResponseEntity<Task> newSingleChoice(@RequestBody NewTaskDTO dto) {
         Task task = buildTaskFromDto(dto, TaskType.SINGLE_CHOICE);
         Task saved = taskService.createTask(dto.getCourseId(), task);
@@ -52,11 +54,17 @@ public class TaskController {
         return ResponseEntity.ok(saved);
     }
 
-    @PostMapping("/multiplechoice")
+    @PostMapping("/new/multiplechoice")
     public ResponseEntity<Task> newMultipleChoice(@RequestBody NewTaskDTO dto) {
         Task task = buildTaskFromDto(dto, TaskType.MULTIPLE_CHOICE);
         Task saved = taskService.createTask(dto.getCourseId(), task);
 
         return ResponseEntity.ok(saved);
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<TaskListItemDTO>> listAllTasks() {
+        List<TaskListItemDTO> tasks = taskService.getAllTasks();
+        return ResponseEntity.ok(tasks);
     }
 }

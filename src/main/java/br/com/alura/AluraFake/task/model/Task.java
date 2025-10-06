@@ -28,14 +28,11 @@ public class Task {
     @Column(name = "task_order", nullable = false)
     private int taskOrder;
 
-    @Column(name = "created_at", nullable = false, updatable = false, columnDefinition = "datetime default current_timestamp")
+    @Column(name = "createdAt", nullable = false, updatable = false, columnDefinition = "datetime default current_timestamp")
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TaskOption> options;
-
-    public Task() {
-    }
 
     public Long getId() {
         return id;
