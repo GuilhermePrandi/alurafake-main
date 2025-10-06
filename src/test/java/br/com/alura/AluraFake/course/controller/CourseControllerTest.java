@@ -1,7 +1,10 @@
 package br.com.alura.AluraFake.course.controller;
 
+import br.com.alura.AluraFake.course.dto.InstructorCourseReportDTO;
+import br.com.alura.AluraFake.course.dto.InstructorCourseReportResponseDTO;
 import br.com.alura.AluraFake.course.dto.NewCourseDTO;
 import br.com.alura.AluraFake.course.model.Course;
+import br.com.alura.AluraFake.course.model.Status;
 import br.com.alura.AluraFake.course.repository.CourseRepository;
 import br.com.alura.AluraFake.course.service.CourseService;
 import br.com.alura.AluraFake.user.*;
@@ -11,10 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -141,6 +147,55 @@ class CourseControllerTest {
                 .andExpect(status().isBadRequest());
 
         verify(courseService, times(1)).publishCourse(courseId);
+    }
+
+
+    @Test
+    void getInstructorCourses__should_return_ok_when_report_exists() throws Exception {
+        Long instructorId = 1L;
+        InstructorCourseReportDTO course1 = new InstructorCourseReportDTO(
+                1L, "Java", Status.BUILDING, LocalDateTime.now(), 5L
+        );
+        InstructorCourseReportDTO course2 = new InstructorCourseReportDTO(
+                2L, "Spring", Status.PUBLISHED, LocalDateTime.now(), 3L
+        );
+
+        InstructorCourseReportResponseDTO mockReport =
+                new InstructorCourseReportResponseDTO(2L, Arrays.asList(course1, course2));
+
+        when(courseService.getCoursesByInstructor(instructorId)).thenReturn(mockReport);
+
+        mockMvc.perform(get("/course/instructor/{id}/courses", instructorId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+
+        verify(courseService, times(1)).getCoursesByInstructor(instructorId);
+    }
+
+    @Test
+    void getInstructorCourses__should_return_not_found_when_instructor_does_not_exist() throws Exception {
+        Long instructorId = 2L;
+        when(courseService.getCoursesByInstructor(instructorId))
+                .thenThrow(new IllegalArgumentException("Instructor not found"));
+
+        mockMvc.perform(get("/course/instructor/{id}/courses", instructorId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+        verify(courseService, times(1)).getCoursesByInstructor(instructorId);
+    }
+
+    @Test
+    void getInstructorCourses__should_return_bad_request_when_service_state_invalid() throws Exception {
+        Long instructorId = 3L;
+        when(courseService.getCoursesByInstructor(instructorId))
+                .thenThrow(new IllegalStateException("Invalid state"));
+
+        mockMvc.perform(get("/course/instructor/{id}/courses", instructorId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+        verify(courseService, times(1)).getCoursesByInstructor(instructorId);
     }
 
 }
