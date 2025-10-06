@@ -1,11 +1,16 @@
 package br.com.alura.AluraFake.course.service;
 
+import br.com.alura.AluraFake.course.dto.InstructorCourseReportDTO;
+import br.com.alura.AluraFake.course.dto.InstructorCourseReportResponseDTO;
 import br.com.alura.AluraFake.course.model.Course;
 import br.com.alura.AluraFake.course.repository.CourseRepository;
 import br.com.alura.AluraFake.course.model.Status;
 import br.com.alura.AluraFake.task.model.Task;
 import br.com.alura.AluraFake.task.repository.TaskRepository;
 import br.com.alura.AluraFake.course.validator.CourseValidator;
+import br.com.alura.AluraFake.user.Role;
+import br.com.alura.AluraFake.user.User;
+import br.com.alura.AluraFake.user.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,13 +23,15 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final TaskRepository taskRepository;
     private final CourseValidator courseValidator;
+    private final UserRepository userRepository;
 
     public CourseService(CourseRepository courseRepository,
                          TaskRepository taskRepository,
-                         CourseValidator courseValidator) {
+                         CourseValidator courseValidator, UserRepository userRepository) {
         this.courseRepository = courseRepository;
         this.taskRepository = taskRepository;
         this.courseValidator = courseValidator;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -39,5 +46,21 @@ public class CourseService {
         course.setStatus(Status.PUBLISHED);
         course.setPublishedAt(LocalDateTime.now());
         return courseRepository.save(course);
+    }
+
+    public InstructorCourseReportResponseDTO getCoursesByInstructor(Long instructorId) {
+        var instructor = userRepository.findById(instructorId)
+                .orElseThrow(() -> new IllegalArgumentException("Instrutor não encontrado"));
+
+        if (!instructor.getRole().equals(Role.INSTRUCTOR)) {
+            throw new IllegalStateException("Usuário não é um instrutor");
+        }
+
+        List<InstructorCourseReportDTO> courses =
+                courseRepository.findCoursesByInstructorId(instructorId);
+
+        long totalCourses = courses.size();
+
+        return new InstructorCourseReportResponseDTO(totalCourses, courses);
     }
 }

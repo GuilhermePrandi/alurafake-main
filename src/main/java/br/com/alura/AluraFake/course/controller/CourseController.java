@@ -1,5 +1,7 @@
 package br.com.alura.AluraFake.course.controller;
 
+import br.com.alura.AluraFake.course.dto.InstructorCourseReportDTO;
+import br.com.alura.AluraFake.course.dto.InstructorCourseReportResponseDTO;
 import br.com.alura.AluraFake.course.model.Course;
 import br.com.alura.AluraFake.course.dto.CourseListItemDTO;
 import br.com.alura.AluraFake.course.repository.CourseRepository;
@@ -66,6 +68,18 @@ public class CourseController {
         } catch (IllegalStateException | IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new ErrorItemDTO("course", ex.getMessage()));
+        }
+    }
+
+    @GetMapping("/instructor/{id}/courses")
+    public ResponseEntity<InstructorCourseReportResponseDTO> getInstructorCourses(@PathVariable("id") Long instructorId) {
+        try {
+            InstructorCourseReportResponseDTO report = courseService.getCoursesByInstructor(instructorId);
+            return ResponseEntity.ok(report);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 }
