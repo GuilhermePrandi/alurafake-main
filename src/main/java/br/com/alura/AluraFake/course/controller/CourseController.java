@@ -1,6 +1,5 @@
 package br.com.alura.AluraFake.course.controller;
 
-import br.com.alura.AluraFake.course.dto.InstructorCourseReportDTO;
 import br.com.alura.AluraFake.course.dto.InstructorCourseReportResponseDTO;
 import br.com.alura.AluraFake.course.model.Course;
 import br.com.alura.AluraFake.course.dto.CourseListItemDTO;
@@ -35,8 +34,6 @@ public class CourseController {
     @Transactional
     @PostMapping("/new")
     public ResponseEntity createCourse(@Valid @RequestBody NewCourseDTO newCourse) {
-
-        //Caso implemente o bonus, pegue o instrutor logado
         Optional<User> possibleAuthor = userRepository
                 .findByEmail(newCourse.getEmailInstructor())
                 .filter(User::isInstructor);

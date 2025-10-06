@@ -12,6 +12,4 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByCourseIdOrderByTaskOrder(Long courseId);
 
     boolean existsByCourseIdAndStatement(Long courseId, String statement);
-
-    boolean existsByCourseIdAndTaskOrder(Long courseId, int taskOrder);
 }

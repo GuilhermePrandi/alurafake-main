@@ -124,8 +124,8 @@ class CourseServiceTest {
         InstructorCourseReportResponseDTO report = courseService.getCoursesByInstructor(instructorId);
 
         assertNotNull(report);
-        assertEquals(2, report.getTotalCourses());
-        assertEquals(courseList, report.getCourses());
+        assertEquals(2, report.totalCourses());
+        assertEquals(courseList, report.courses());
 
         verify(userRepository, times(1)).findById(instructorId);
         verify(courseRepository, times(1)).findCoursesByInstructorId(instructorId);

@@ -1,6 +1,5 @@
 package br.com.alura.AluraFake.task.controller;
 
-import br.com.alura.AluraFake.course.dto.CourseListItemDTO;
 import br.com.alura.AluraFake.task.dto.NewTaskDTO;
 import br.com.alura.AluraFake.task.dto.TaskListItemDTO;
 import br.com.alura.AluraFake.task.model.Task;
