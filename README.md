@@ -1,212 +1,97 @@
-# Case Tecnico Alura
-Seja bem-vindo ao teste para desenvolvedor Java Pleno da Alura. Neste
-desafio, simulamos uma parte do nosso domínio para que você possa demonstrar seus conhecimentos. 
-Não há respostas certas ou erradas, nosso objetivo é avaliar como você aplica lógica e 
-conceitos de orientação a objetos para solucionar problemas.
+# AluraFake
 
-## Requisitos
+AluraFake é um projeto simulado inspirado na plataforma Alura, desenvolvido como code challenge para fins de avaliação técnica. Ele implementa funcionalidades básicas de gerenciamento de usuários, cursos e tarefas, incluindo regras de acesso baseadas em perfis (roles) e integração com banco de dados.
 
-- Utilizar java 18+
-- Utilizar Spring boot
-- Utilizar Spring data JPA
-- Utilizar mysql
-- utilizar criação de tabelas manuais ([flyway](https://www.baeldung.com/database-migrations-with-flyway))
+## Tecnologias
 
-## Orientações
+Java 21
 
-1. Suba o templete incial do projeto no seu github e deixe o repositório público(Seus commits serão avaliados).
-2. Abra o projeto na IDE de sua preferência.
-3. requisitos estão em português, mas lembre-se de no código escrever tudo em inglês.
-4. bônus não é obrigatório e não possui ordem, então você pode realizar apenas um dos que
-   são citados lá, de acordo com sua preferência.
+Spring Boot 3.3
 
-## Desafio
+Spring Security 6
 
-Já disponibilizamos um projeto base como ponto de partida, no qual as tecnologias exigidas já estão configuradas. 
-Algumas lógicas relacionadas às entidades usuário e curso já estão implementadas, 
-e podem ser utilizadas como orientação para a resolução das questões.
+JPA/Hibernate
 
-**Importante:** Não se preocupe com a parte visual, toda a interação devem ser feitas
-por API.
+MySQL (ou H2 para testes)
 
-### Questão 1 — Modelagem de Atividades
+Flyway para migrações de banco de dados
 
-Na Alura, os cursos possuem **atividades interativas** que ajudam no processo de aprendizado.  
-Elas podem ser de diferentes formatos, cada uma com suas regras específicas.
+JUnit 5, MockMvc para testes
 
-Você deve implementar a modelagem dessas atividades, de acordo com os requisitos abaixo.  
-Os esboços dos endpoints já estão criados — sua tarefa será **implementar a lógica completa** para cada tipo de atividade.
+GitHub Actions para CI
 
-##### Regras gerais
-- O enunciado (`statement`) deve ter no mínimo 4 e no máximo 255 caracteres.
-- O curso não pode ter duas questões com o mesmo enunciado
-- A ordem deve ser um número inteiro positivo.
-- Um curso só pode receber atividades se seu status for `BULDING`.
+## Funcionalidades principais 
 
-#### Tipos de atividade
+- Cadastro, listagem e consulta de usuários, cursos e tarefas.
+- Relatórios de cursos por instrutor.
+- Criação de tarefas, cursos e geração de relatórios restritos a instrutores.
+- Endpoints de listagem acessíveis a qualquer usuário autenticado.
+- Migrações automáticas de banco via Flyway.
 
-##### 1.1 — Atividade de Resposta Aberta
+## Estrutura das Tasks (Atividades) e Course (Cursos)
 
-**Endpoint:** `/task/new/opentext`
+- Controller: define os endpoints e encaminha requisições para o serviço.
+- Service: contém a lógica de negócio e regras de validação antes de persistir os dados.
+- Validator: valida regras específicas de negócio, como campos obrigatórios e consistência de dados.
+- Model: representa as entidades do sistema mapeadas para o banco via JPA/Hibernate.
+- DTOs: objetos de transferência de dados entre Service e Controller, sem expor diretamente as entidades.
+
+## Como rodar o projeto 
+
+mvn spring-boot:run
+
+## Criação de atividades
+
+- Atividade de Resposta Aberta
+  
 ```bash
-curl -w "%{http_code}\n" -X POST http://localhost:8080/task/new/opentext \
-  -H "Content-Type: application/json" \
-  -d '{
-        "courseId": 42,
-        "statement": "O que aprendemos na aula de hoje?",
-        "order": 1
-      }'
- ```
-
-#### 1.2 — Atividade de alternativa única
-
-**Endpoint:** `/task/new/singlechoice`
-```bash
-curl -w "%{http_code}\n" -X POST http://localhost:8080/task/new/singlechoice \
-  -H "Content-Type: application/json" \
-  -d '{
-        "courseId": 42,
-        "statement": "O que aprendemos hoje?",
-        "order": 2,
-        "options": [
-            {
-                "option": "Java",
-                "isCorrect": true
-            },
-            {
-                "option": "Python",
-                "isCorrect": false
-            },
-            {
-                "option": "Ruby",
-                "isCorrect": false
-            }
-        ]
-      }'
- ```
-
-##### Regras
-- A atividade deve ter no minimo 2 e no máximo 5 alternativas.
-- A atividade deve ter uma única alternativa correta.
-- As alternativas devem ter no mínimo 4 e no máximo 80 caracteres.
-- As alternativas não podem ser iguais entre si.
-- As alternativas não podem ser iguais ao enunciado da atividade.
-
-##### 1.3 — Atividade de múltipla escolha
-
-**Endpoint:** `/task/new/multiplechoice`
-```bash
-curl -w "%{http_code}\n" -X POST http://localhost:8080/task/new/singlechoice \
-  -H "Content-Type: application/json" \
-  -d '{
-        "courseId": 42,
-        "statement": "O que aprendemos hoje?",
-        "order": 2,
-        "options": [
-            {
-                "option": "Java",
-                "isCorrect": true
-            },
-            {
-                "option": "Spring",
-                "isCorrect": true
-            },
-            {
-                "option": "Ruby",
-                "isCorrect": false
-            }
-        ]
-      }'
- ```
-
-##### Regras
-- A atividade deve ter no minimo 3 e no máximo 5 alternativas.
-- A atividade deve ter duas ou mais alternativas corretas, e ao menos uma alternativa incorreta.
-- As alternativas devem ter no mínimo 4 e no máximo 80 caracteres.
-- As alternativas não podem ser iguais entre si.
-- As alternativas não podem ser iguais ao enunciado da atividade.
-
-#### 👉👉Importante👈👈
-Caso uma nova atividade seja adicionada a um curso com uma ordem que já está em uso, todas as atividades com aquela ordem ou superiores devem ser deslocadas uma posição para frente, garantindo que cada atividade tenha uma ordem única e sequencial.
-```
-Exemplo:
-Se o curso possui as seguintes atividades:
-Ordem 1 – Atividade A
-Ordem 2 – Atividade B
-Ordem 3 – Atividade C
-
-E for adicionada uma nova com ordem 2, a lista será reorganizada assim:
-
-Ordem 1 – Atividade A
-Ordem 2 – Nova Atividade
-Ordem 3 – Atividade B (foi deslocada)
-Ordem 4 – Atividade C (foi deslocada)
-
-Validação de sequência:
-A ordem das atividades deve ser contínua, sem saltos. Ou seja, 
-não é permitido adicionar uma atividade com ordem 4 se ainda não existem atividades com ordens 3 (ou anteriores).
-
-Exemplo inválido:
-Se o curso tem:
-
-Ordem 1 – Atividade A
-Ordem 2 – Atividade B
-
-E uma nova atividade tenta ser inserida com ordem 4, o sistema deve lançar um erro informando que a sequência está incorreta.
-
+{
+  "courseId": 1,
+  "statement": "Descreva o que é JVM.",
+  "order": 1
+}
 ```
 
-### Questão 2 — Publicação de Cursos
+— Atividade de alternativa única
 
-Para publicar um curso, ele deve:
-
-- Conter ao menos uma atividade de cada tipo.
-- Ter atividades com `order` em sequência contínua (ex: 1, 2, 3...).
-- O curso só pode ser publicado se o status for `BUILDING`.
-- Ter o `status` atualizado para `PUBLISHED` e `publishedAt` com a data atual.
-
-Implemente o endpoint `/course/{id}/publish` validando essas regras antes da publicação.
-
-Exemplo de requisição:
 ```bash
-curl -w "%{http_code}\n" -X POST http://localhost:8080/course/42/publish
+{
+  "courseId": 1,
+  "statement": "Qual alternativa contém a sintaxe correta para declarar uma variável em Java?",
+  "order": 2,
+  "options": [
+    {"option": "int numero = 10;", "isCorrect": true},
+    {"option": "numero int = 10;", "isCorrect": false},
+    {"option": "int = numero 10;", "isCorrect": false},
+    {"option": "10 = int numero;", "isCorrect": false}
+  ]
+ }
 ```
 
+-  Atividade de múltipla escolha
 
-### Questão 3 — Relatório de Cursos por Instrutor
-
-Implemente um endpoint para gerar um relatório de cursos vinculados a um instrutor específico.
-
-O relatório deve:
-
-- Receber o id do instrutor como parâmetro.
-- Caso o usuário não exista retornar 404.
-- Se o usuário existir mas não for instrutor retorna 400.
-- Retornar a lista de cursos criados por este instrutor, incluindo: id, title, status, publishedAt(se houver) e quantidade de atividades do curso.
-- Retornar também o total de cursos publicados desse instrutor.
-- Caso o instrutor não possua cursos, retornar uma lista vazia.
-
-Exemplo de requisição:
 ```bash
-curl -w "%{http_code}\n" -X GET http://localhost:8080/instructor/7/courses
+{
+  "courseId": 1,
+  "statement": "Quais são tipos primitivos do Java?",
+  "order": 3,
+  "options": [
+    {"option": "int", "isCorrect": true},
+    {"option": "String", "isCorrect": false},
+    {"option": "boolean", "isCorrect": true},
+    {"option": "List", "isCorrect": false}
+  ]
+}
 ```
 
-### Bônus (não obrigatório)
-Você não precisa implementar obrigatóriamente nenhum dos itens abaixo.
-Caso decida implementar, escolha **apenas um**:
+## Publicação de Cursos
 
-- Spring Security: Proteger os endpoints de criação de atividades, criação/publicação de cursos e relatório de cursos por instrutor.
-O acesso deve ser restrito a usuários com a role INSTRUCTOR. Os demais endpoints de listagens podem ser acessados por qualquer usuário autenticado.
+```bash
+curl -X POST "http://localhost:8080/course/1/publish"
+```
 
-- Automação com GitHub Actions: Criar uma pipeline que execute os testes automaticamente a cada commit.
+## Relatório de cursos por instrutor
 
-## Considerações finais
-
-- A avaliação do case será realizada exclusivamente com base nos requisitos e na forma como você utiliza **lógica**,
-**orientação a objetos** e **testes**. Qualquer tecnologia fora do escopo, como Swagger, Docker, ou aspectos visuais, 
-  não será considerada como um diferencial.
-- Testes são obrigatórios e serão avaliados como requisito.
-- Caso você tenha alguma dúvida sobre a descrição das questões, faça anotações no código e siga o que considerar mais adequado.
-- Outros candidatos estão concorrendo à mesma vaga, e códigos muito semelhantes resultarão na anulação do case.
-- Utilize ferramentas de IA, mas tenha cautela com o código gerado automaticamente. Caso avance para a próxima etapa, 
-a entrevista síncrona será baseada no código que você produziu.
+```bash
+curl -X GET "http://localhost:8080/course/instructor/1/courses"
+```
