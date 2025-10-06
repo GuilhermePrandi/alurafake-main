@@ -36,6 +36,16 @@ GitHub Actions para CI
 - Model: representa as entidades do sistema mapeadas para o banco via JPA/Hibernate.
 - DTOs: objetos de transferência de dados entre Service e Controller, sem expor diretamente as entidades.
 
+## Estrutura do Banco de Dados
+
+O banco de dados do projeto contém quatro tabelas principais:
+
+- **user**: armazena os usuários do sistema, incluindo alunos e instrutores.
+- **course**: armazena os cursos criados pelos instrutores.
+- **task**: armazena as tarefas/atividades associadas a cada curso.
+- **task_option**: armazena as opções de respostas das tarefas do tipo escolha (single ou multiple choice).
+
+
 ## Como rodar o projeto 
 
 mvn spring-boot:run
