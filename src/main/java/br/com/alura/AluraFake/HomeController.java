@@ -12,6 +12,7 @@ public class HomeController {
             <ul>
                 <li><a href="/user/all">Usuários cadastrados</a></li>
                 <li><a href="/course/all">Cursos cadastrados</a></li>
+                <li><a href="/course/instructor/2/courses">Relatório de cursos do instrutor #2</a></li>
             </ul>
             """;
     }
