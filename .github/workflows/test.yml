@@ -53,7 +53,7 @@ jobs:
           done
 
       - name: Run Flyway migrations
-        run: mvn flyway:migrate -Dflyway.url=jdbc:mysql://127.0.0.1:3306/alurafake_test?useSSL=false&serverTimezone=UTC -Dflyway.user=root -Dflyway.password=root
+        run: mvn flyway:migrate -Dflyway.url="jdbc:mysql://127.0.0.1:3306/alurafake_test?useSSL=false&serverTimezone=UTC" -Dflyway.user=root -Dflyway.password=root
 
       - name: Build and run tests
         run: mvn clean verify -B
