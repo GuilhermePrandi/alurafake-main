@@ -1,5 +1,6 @@
 package br.com.alura.AluraFake.task.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 @Entity
@@ -12,6 +13,7 @@ public class TaskOption {
 
     @ManyToOne
     @JoinColumn(name = "task_id", nullable = false)
+    @JsonIgnore
     private Task task;
 
     @Column(name = "option_text", nullable = false, length = 80)

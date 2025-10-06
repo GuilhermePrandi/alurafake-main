@@ -3,13 +3,13 @@ package br.com.alura.AluraFake.task.dto;
 public class NewTaskOptionDTO {
 
     private String option;
-    private boolean isCorrect;
+    private boolean correct;
 
     public NewTaskOptionDTO() {}
 
-    public NewTaskOptionDTO(String option, boolean isCorrect) {
+    public NewTaskOptionDTO(String option, boolean correct) {
         this.option = option;
-        this.isCorrect = isCorrect;
+        this.correct = correct;
     }
 
     public String getOption() {
@@ -21,10 +21,10 @@ public class NewTaskOptionDTO {
     }
 
     public boolean isCorrect() {
-        return isCorrect;
+        return correct;
     }
 
     public void setCorrect(boolean isCorrect) {
-        this.isCorrect = isCorrect;
+        this.correct = isCorrect;
     }
 }

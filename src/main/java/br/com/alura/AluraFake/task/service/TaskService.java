@@ -10,6 +10,8 @@ import br.com.alura.AluraFake.task.validator.TaskValidator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -39,6 +41,8 @@ public class TaskService {
 
         adjustTaskOrder(courseId, task.getTaskOrder());
 
+        task.setCreatedAt(LocalDateTime.now());
+
         return taskRepository.save(task);
     }
 
@@ -61,12 +65,16 @@ public class TaskService {
 
     private void adjustTaskOrder(Long courseId, int newOrder) {
         List<Task> tasks = taskRepository.findByCourseIdOrderByTaskOrder(courseId);
+
         if (newOrder > tasks.size() + 1) {
             throw new IllegalArgumentException("A ordem da atividade não pode pular números");
         }
+
         tasks.stream()
                 .filter(t -> t.getTaskOrder() >= newOrder)
+                .sorted(Comparator.comparingInt(Task::getTaskOrder).reversed())
                 .forEach(t -> t.setTaskOrder(t.getTaskOrder() + 1));
+
         taskRepository.saveAll(tasks);
     }
 
