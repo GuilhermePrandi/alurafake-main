@@ -9,9 +9,9 @@ import br.com.alura.AluraFake.task.model.Task;
 import br.com.alura.AluraFake.task.model.TaskType;
 import br.com.alura.AluraFake.task.repository.TaskRepository;
 import br.com.alura.AluraFake.course.validator.CourseValidator;
-import br.com.alura.AluraFake.user.Role;
-import br.com.alura.AluraFake.user.User;
-import br.com.alura.AluraFake.user.UserRepository;
+import br.com.alura.AluraFake.user.model.Role;
+import br.com.alura.AluraFake.user.model.User;
+import br.com.alura.AluraFake.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -45,7 +45,7 @@ class CourseServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        User instructor = mock(br.com.alura.AluraFake.user.User.class);
+        User instructor = mock(User.class);
         when(instructor.isInstructor()).thenReturn(true);
 
         course = new Course("Java", "Curso de Java", instructor);

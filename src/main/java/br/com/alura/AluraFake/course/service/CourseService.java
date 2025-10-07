@@ -8,9 +8,8 @@ import br.com.alura.AluraFake.course.model.Status;
 import br.com.alura.AluraFake.task.model.Task;
 import br.com.alura.AluraFake.task.repository.TaskRepository;
 import br.com.alura.AluraFake.course.validator.CourseValidator;
-import br.com.alura.AluraFake.user.Role;
-import br.com.alura.AluraFake.user.User;
-import br.com.alura.AluraFake.user.UserRepository;
+import br.com.alura.AluraFake.user.model.Role;
+import br.com.alura.AluraFake.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
