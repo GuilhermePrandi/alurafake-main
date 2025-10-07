@@ -1,14 +1,12 @@
-# AluraFake
+# AluraFake 📘
 
 AluraFake é um projeto simulado inspirado na plataforma Alura, desenvolvido como code challenge para fins de avaliação técnica. Ele implementa funcionalidades básicas de gerenciamento de usuários, cursos e tarefas, incluindo regras de acesso baseadas em perfis (roles) e integração com banco de dados.
 
-## Tecnologias
+## Tecnologias 💻
 
 Java 21
 
 Spring Boot 3.3
-
-Spring Security 6
 
 JPA/Hibernate
 
@@ -20,7 +18,7 @@ JUnit 5, MockMvc para testes
 
 GitHub Actions para CI
 
-## Funcionalidades principais 
+## Funcionalidades principais 📸
 
 - Cadastro, listagem e consulta de usuários, cursos e tarefas.
 - Relatórios de cursos por instrutor.
@@ -28,7 +26,7 @@ GitHub Actions para CI
 - Endpoints de listagem acessíveis a qualquer usuário autenticado.
 - Migrações automáticas de banco via Flyway.
 
-## Estrutura das Tasks (Atividades) e Course (Cursos)
+## Estrutura das Tasks (Atividades) e Course (Cursos) ⚙️
 
 - Controller: define os endpoints e encaminha requisições para o serviço.
 - Service: contém a lógica de negócio e regras de validação antes de persistir os dados.
@@ -36,7 +34,7 @@ GitHub Actions para CI
 - Model: representa as entidades do sistema mapeadas para o banco via JPA/Hibernate.
 - DTOs: objetos de transferência de dados entre Service e Controller, sem expor diretamente as entidades.
 
-## Estrutura do Banco de Dados
+## Estrutura do Banco de Dados ⚙️
 
 O banco de dados do projeto contém quatro tabelas principais:
 
@@ -46,11 +44,11 @@ O banco de dados do projeto contém quatro tabelas principais:
 - **task_option**: armazena as opções de respostas das tarefas do tipo escolha (single ou multiple choice).
 
 
-## Como rodar o projeto 
+## Como rodar o projeto ⏯️
 
 mvn spring-boot:run
 
-## Criação de atividades
+## Criação de atividades 📇
 
 - Atividade de Resposta Aberta
   
@@ -62,7 +60,7 @@ mvn spring-boot:run
 }
 ```
 
-— Atividade de alternativa única
+— Atividade de alternativa única 
 
 ```bash
 {
@@ -70,10 +68,10 @@ mvn spring-boot:run
   "statement": "Qual alternativa contém a sintaxe correta para declarar uma variável em Java?",
   "order": 2,
   "options": [
-    {"option": "int numero = 10;", "isCorrect": true},
-    {"option": "numero int = 10;", "isCorrect": false},
-    {"option": "int = numero 10;", "isCorrect": false},
-    {"option": "10 = int numero;", "isCorrect": false}
+    {"option": "int numero = 10;", "correct": true},
+    {"option": "numero int = 10;", "correct": false},
+    {"option": "int = numero 10;", "correct": false},
+    {"option": "10 = int numero;", "correct": false}
   ]
  }
 ```
@@ -86,15 +84,15 @@ mvn spring-boot:run
   "statement": "Quais são tipos primitivos do Java?",
   "order": 3,
   "options": [
-    {"option": "int", "isCorrect": true},
-    {"option": "String", "isCorrect": false},
-    {"option": "boolean", "isCorrect": true},
-    {"option": "List", "isCorrect": false}
+    {"option": "int", "correct": true},
+    {"option": "String", "correct": false},
+    {"option": "boolean", "correct": true},
+    {"option": "List", "correct": false}
   ]
 }
 ```
 
-## Publicação de Cursos
+## Publicação de Cursos 👓
 
 ```bash
 curl -X POST "http://localhost:8080/course/1/publish"
